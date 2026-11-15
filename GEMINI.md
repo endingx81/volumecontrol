@@ -39,8 +39,8 @@ AI 에이전트(당신)가 개발 중 **실제로 저질렀던 치명적인 실�
   - **실제 실수**: 설치 프로그램(Setup.exe) 생성 지시를 받았을 때, 프로젝트 환경에 구축된 자체 빌더를 확인하지 않고 Inno Setup(`iscc`), NSIS(`makensis`) 등 엉뚱한 외부 도구를 찾으며 헤매고 시간을 지체함. 동일 워크스페이스 그룹(`D:\coding\visualstudio\easyinstall`)에 전용 인스톨러 빌더가 이미 완성되어 있음에도 이를 즉시 활용하지 못함.
   - **방지 원칙 (표준 배포 패키징 파이프라인)**:
     1. **단일 설치 파일 빌더 절대 경로**:  
-       `& "D:\coding\visualstudio\easyinstall\bin\Release\easyinstall.exe" -i "<입력_바이너리_또는_폴더>" -o "<출력경로>\Setup.exe" -n "<프로그램명>" -v "<버전>" -p "purestory" -m "<메인_exe명>"`  
-       *(예: `& "D:\coding\visualstudio\easyinstall\bin\Release\easyinstall.exe" -i "D:\coding\visualstudio\clearMax\build\Release\clearMax.exe" -o "D:\coding\visualstudio\clearMax\ClearMax_Setup.exe" -n "clearMax" -v "1.14" -p "purestory" -m "clearMax.exe"`)*
+       `& "D:\coding\visualstudio\easyinstall\bin\Release\easyinstall.exe" -i "<입력_바이너리_또는_폴더>" -o "<출력경로>\Setup.exe" -n "<프로그램명>" -v "<버전>" -p "ai-open.kr" -m "<메인_exe명>"`  
+       *(예: `& "D:\coding\visualstudio\easyinstall\bin\Release\easyinstall.exe" -i "D:\coding\visualstudio\clearMax\build\Release\clearMax.exe" -o "D:\coding\visualstudio\clearMax\ClearMax_Setup.exe" -n "clearMax" -v "1.14" -p "ai-open.kr" -m "clearMax.exe"`)*
     2. **무설치 포터블 압축 아카이브 생성**:  
        `powershell -Command "Compress-Archive -Path '<바이너리_경로>' -DestinationPath '<출력경로>\<프로그램명>_portable.zip' -Force"`
     3. **GitHub Release 자동 배포 규격**:  
@@ -94,6 +94,10 @@ AI 에이전트(당신)가 개발 중 **실제로 저질렀던 치명적인 실�
 ### 📜 PowerShell 텍스트 파일 조작 시 UTF-8 인코딩 강제
 - Windows PowerShell에서 `Add-Content`나 `Out-File` 등의 명령어로 텍스트 파일에 내용을 덧붙이거나 작성할 때, 기본 인코딩(ANSI 등)이 적용되어 기존 UTF-8(특히 한글)이 깨지는 현상이 발생함.
 - 따라서 파일 I/O를 수행하는 셸 스크립트를 작성할 때는 반드시 `-Encoding UTF8` 파라미터를 명시하여 인코딩 깨짐을 원천 차단할 것.
+
+### 🖥️ Windows 배치 스크립트(.bat) 생성/수정 시 CP949(EUC-KR) 인코딩 강제
+- **배경**: 한국어 Windows 명령 프롬프트(`cmd.exe`)는 기본 콘솔 인코딩으로 CP949(코드페이지 949)를 사용함.
+- **철칙**: 배치 파일(`.bat`)에 한글 안내 메시지(`echo ...`)나 주석이 포함되는 경우, 일반 UTF-8로 저장하면 콘솔 실행 시 심각한 한글 깨짐(모지바케)이 발생하므로 반드시 한국어 Windows ANSI 규격인 **CP949(EUC-KR)**로 명시적으로 인코딩하여 저장할 것. (PowerShell 조작 시 `[System.Text.Encoding]::GetEncoding(949)` 또는 Python `encoding='cp949'` 사용)
 
 ---
 
